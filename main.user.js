@@ -30,6 +30,8 @@ CTRL+RIGHT         = Fast forward media by 1 minute
 CTRL+SHIFT+LEFT    = Rewind media by 5 minutes
 CTRL+SHIFT+RIGHT   = Fast forward media by 5 minutes
 CTRL+/             = Fast forward media by 1.5 minutes
+Z                  = Rewind media by 15 seconds
+X                  = Fast forward media by 30 seconds
 0 to 9             = Seek media to 0%, 10%, 20%,...90%
 SHIFT+0 to SHIFT+9 = Seek media to 5%, 15%, 25%,...95%
 CTRL+1 to CTRL+5   = Change audio volume to 20%, 40%, 60$, 80%, 100%
@@ -38,6 +40,11 @@ CTRL+]             = Increase media speed by 0.2x (by default)
 CTRL+;             = Reset media speed
 CTRL+'             = Change custom media speed
 CTRL+\             = Change unit of media speed increment/decrement
+W                  = Set media speed to 2.4x
+A                  = Set media speed to 1.5x
+R                  = Set media speed to 3x
+S                  = Decrease media speed by 0.1x
+D                  = Increase media speed by 0.1x
 
 For Widescreen Video Viewport:
 CTRL+6             = Change video aspect ratio for widescreen content. Fix widescreen content shrunk to 4:3 TV format.
@@ -54,8 +61,10 @@ CTRL+SHIFT+9       = Full-zoom 4:3 letterbox content to remove all of top+bottom
 
 For Any Video Viewport:
 CTRL+9             = Reset video aspect ratio
+P                  = Toggle Picture-In-Picture / Video popout (Chrome/ium only. Use Ctrl+Shift+] for Firefox)
 ALT+P              = Toggle Picture-In-Picture / Video popout (Chrome/ium only. Use Ctrl+Shift+] for Firefox)
 ALT+S              = Take screenshot of current video frame (in its original size and aspect ratio)
+L                  = Set video quality to 1080p, or the closest available quality (YouTube only)
 */
 
 ((eleOSD, osdTimer) => {
@@ -105,11 +114,11 @@ www.tiktok.com
     },
     { //0 to 9: seek media to 0%,10%,20%,...90%
       key: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], modifiers: "",
-      func: (ele, key, keyIndex) => ele.currentTime = keyIndex / 10 * ele.duration
+      func: (ele, key, keyIndex) => { ele.currentTime = keyIndex / 10 * ele.duration }
     },
     { //shift+0 to shift+9: seek media to 5%,15%,25%,...95%
       key: [")", "!", "@", "#", "$", "%", "^", "&", "*", "("], modifiers: "S",
-      func: (ele, key, keyIndex) => ele.currentTime = (keyIndex + 0.5) / 10 * ele.duration
+      func: (ele, key, keyIndex) => { ele.currentTime = (keyIndex + 0.5) / 10 * ele.duration }
     },
     { //ctrl+1 to ctrl+5: set audio volume to 20%,40%,60%,80%,100%
       key: ["1", "2", "3", "4", "5"], modifiers: "C",
@@ -117,43 +126,43 @@ www.tiktok.com
     },
     { //left: rewind media by 5 seconds. if forceMediaSeekOnArrowKeyDomains matches
       key: (forceMediaSeekOnArrowKeyDomains.test(location.hostname) && "ArrowLeft") || "", modifiers: "",
-      func: (ele, key) => ele.currentTime -= 5
+      func: (ele, key) => { ele.currentTime -= 5 }
     },
     { //shift+left: rewind media by 30 seconds
       key: "ArrowLeft", modifiers: "S",
-      func: (ele, key) => ele.currentTime -= 30
+      func: (ele, key) => { ele.currentTime -= 30 }
     },
     { //ctrl+left: rewind media by 1 minute
       key: "ArrowLeft", modifiers: "C",
-      func: (ele, key) => ele.currentTime -= 60
+      func: (ele, key) => { ele.currentTime -= 60 }
     },
     { //ctrl+shift+left: rewind media by 5 minutes
       key: "ArrowLeft", modifiers: "CS",
-      func: (ele, key) => ele.currentTime -= 300
+      func: (ele, key) => { ele.currentTime -= 300 }
     },
     { //ctrl+,: rewind media by 1/30 second
       key: ",", modifiers: "C",
-      func: (ele, key) => ele.currentTime -= 1/30
+      func: (ele, key) => { ele.currentTime -= 1/30 }
     },
     { //right: fast forward media by 5 seconds. if forceMediaSeekOnArrowKeyDomains matches
       key: (forceMediaSeekOnArrowKeyDomains.test(location.hostname) && "ArrowRight") || "", modifiers: "",
-      func: (ele, key) => ele.currentTime += 5
+      func: (ele, key) => { ele.currentTime += 5 }
     },
     { //shift+right: fast forward media by 30 seconds
       key: "ArrowRight", modifiers: "S",
-      func: (ele, key) => ele.currentTime += 30
+      func: (ele, key) => { ele.currentTime += 30 }
     },
     { //ctrl+right: fast forward media by 1 minute
       key: "ArrowRight", modifiers: "C",
-      func: (ele, key) => ele.currentTime += 60
+      func: (ele, key) => { ele.currentTime += 60 }
     },
     { //ctrl+shift+right: fast forward media by 5 minutes
       key: "ArrowRight", modifiers: "CS",
-      func: (ele, key) => ele.currentTime += 300
+      func: (ele, key) => { ele.currentTime += 300 }
     },
     { //ctrl+.: fast forward media by 1/30th second
       key: ".", modifiers: "C",
-      func: (ele, key) => ele.currentTime += 1/30
+      func: (ele, key) => { ele.currentTime += 1/30 }
     },
     { //ctrl+shift+/: next frame (when paused; firefox only)
       key: "?", modifiers: "CS",
@@ -161,7 +170,21 @@ www.tiktok.com
     },
     { //ctrl+/: fast forward media by 1.5 minutes
       key: "/", modifiers: "C",
-      func: (ele, key) => ele.currentTime += 87
+      func: (ele, key) => { ele.currentTime += 87 }
+    },
+    { //z: rewind media by 15 seconds
+      key: "Z", modifiers: "",
+      func: (ele, key) => {
+        ele.currentTime -= 15;
+        showOSD("Rewind 15s");
+      }
+    },
+    { //x: fast forward media by 30 seconds
+      key: "X", modifiers: "",
+      func: (ele, key) => {
+        ele.currentTime += 30;
+        showOSD("Forward 30s");
+      }
     },
     { //ctrl+[: decrease media speed
       key: "[", modifiers: "C",
@@ -207,6 +230,34 @@ www.tiktok.com
         } else alert("Input must be a number.");
       }
     },
+    { //w: set media speed to 2.4x
+      key: "W", modifiers: "",
+      func: (ele, key) => updVideoSpeed(ele, 2.4)
+    },
+    { //a: set media speed to 1.5x
+      key: "A", modifiers: "",
+      func: (ele, key) => updVideoSpeed(ele, 1.5)
+    },
+    { //r: set media speed to 3x
+      key: "R", modifiers: "",
+      func: (ele, key) => updVideoSpeed(ele, 3)
+    },
+    { //s: decrease media speed by 0.1x
+      key: "S", modifiers: "",
+      func: (ele, key) => {
+        key = ele.playbackRate - 0.1;
+        if (key < 0.1) key = 0.1;
+        updVideoSpeed(ele, key);
+      }
+    },
+    { //d: increase media speed by 0.1x
+      key: "D", modifiers: "",
+      func: (ele, key) => {
+        key = ele.playbackRate + 0.1;
+        if (key > 16) key = 16;
+        updVideoSpeed(ele, key);
+      }
+    },
     { //ctrl+6: Widescreen aspect ratio
       key: "6", modifiers: "C", videoOnly: true,
       func: (ele, key) => updVideoAspect("scaleX(1.3333)", "Widescreen")
@@ -239,15 +290,20 @@ www.tiktok.com
       key: "9", modifiers: "C", videoOnly: true,
       func: (ele, key) => updVideoAspect("", "Reset")
     },
+    { //p: toggle Picture-In-Picture / Video popout (Chrome/ium only. Use Ctrl+Shift+] for Firefox)
+      key: "P", modifiers: "", videoOnly: true,
+      func: (ele, key) => togglePiP(ele)
+    },
     { //alt+p: toggle Picture-In-Picture / Video popout (Chrome/ium only. Use Ctrl+Shift+] for Firefox)
       key: "P", modifiers: "A", videoOnly: true,
-      func: (ele, key) => document.pictureInPictureEnabled && (document.pictureInPictureElement ? document.exitPictureInPicture() : ele.requestPictureInPicture())
+      func: (ele, key) => togglePiP(ele)
     },
     { //alt+s: take screenshot of current video frame
       key: "S", modifiers: "A", videoOnly: true,
       func: (ele, key, cv, a) => {
         cv = document.createElement("CANVAS");
-        if (cv.width = ele.videoWidth) {
+        cv.width = ele.videoWidth;
+        if (cv.width) {
           cv.height = ele.videoHeight;
           cv.getContext("2d").drawImage(ele, 0, 0);
           a = document.createElement("A");
@@ -258,6 +314,10 @@ www.tiktok.com
           return a.remove()
         }
       }
+    },
+    { //l: set video quality to 1080p, or the closest available quality (YouTube only)
+      key: "L", modifiers: "", videoOnly: true,
+      func: (ele, key) => updVideoQuality(ele)
     }
   ];
   keys.forEach((k, s, m) => {
@@ -276,7 +336,7 @@ www.tiktok.com
       eleOSD.textContent = s;
     } else {
       eleOSD = document.createElement("DIV");
-      eleOSD.style.cssText = "position:fixed;z-index:999999999;right:.5rem;bottom:.5rem;margin:0;padding:.2rem .5rem .1rem .5rem;width:auto;height:auto;font:normal 16pt/normal sans-serif;background:#444;color:#fff";
+      eleOSD.style.cssText = "position:fixed;z-index:999999999;left:30px;top:30px;margin:0;padding:.2rem .5rem .1rem .5rem;width:auto;height:auto;font:normal 14pt/normal Arial,sans-serif;background:#444;color:#fff";
       eleOSD.textContent = s;
       document.body.appendChild(eleOSD);
     }
@@ -314,12 +374,54 @@ www.tiktok.com
     showOSD("Audio " + (vol * 100) + "%");
   }
 
+  function togglePiP(ele) {
+    if (!document.pictureInPictureEnabled) return showOSD("PiP N/A");
+    if (document.pictureInPictureElement) {
+      document.exitPictureInPicture();
+      showOSD("PiP Off");
+    } else ele.requestPictureInPicture().then(() => showOSD("PiP On")).catch(() => showOSD("PiP N/A"));
+  }
+
   function isVisible(ele) {
     while (ele && ele.tagName) {
       if (getComputedStyle(ele).display === "none") return false;
       ele = ele.parentNode
     }
     return true
+  }
+
+  function waitElement(find, tries, done, e) {
+    if ((e = find())) return done(e);
+    if (tries--) setTimeout(() => waitElement(find, tries, done), 50); else done();
+  }
+
+  function updVideoQuality(ele, e, r, p, m, pick) {
+    //YouTube only: open the player's settings menu and select the quality closest to 1080p.
+    if (!/(^|\.)youtube(-nocookie)?\.com$/.test(location.hostname)) return showOSD("Quality: N/A");
+    r = ele.closest(".html5-video-player") || document;
+    if (!(e = r.querySelector(".ytp-settings-button"))) return showOSD("Quality: N/A");
+    pick = () => {
+      m = [...r.querySelectorAll(".ytp-settings-menu .ytp-panel.ytp-quality-menu .ytp-menuitem")]
+        .map(i => ({i: i, h: parseInt((i.textContent.match(/(\d+)p/i) || [])[1])}))
+        .filter(o => o.h)
+        .sort((a, b) => Math.abs(a.h - 1080) - Math.abs(b.h - 1080) || a.h - b.h)[0];
+      if (!m) return showOSD("Quality: N/A");
+      m.i.click();
+      showOSD("Quality " + m.h + "p");
+    };
+    (e.getAttribute("aria-expanded") === "true") || e.click();
+    waitElement(() => {
+      p = r.querySelector(".ytp-settings-menu .ytp-panel.ytp-quality-menu");
+      return (p && isVisible(p)) ? p : [...r.querySelectorAll(".ytp-settings-menu .ytp-panel .ytp-menuitem")].find(i => i.textContent.includes("Quality") && isVisible(i));
+    }, 40, q => {
+      if (!q) return showOSD("Quality: N/A");
+      if (q.matches(".ytp-quality-menu")) return pick();
+      q.click();
+      waitElement(() => {
+        p = r.querySelector(".ytp-settings-menu .ytp-panel.ytp-quality-menu");
+        return (p && isVisible(p)) && p;
+      }, 40, p => p ? pick() : showOSD("Quality: N/A"));
+    });
   }
 
   incrementUnit = parseFloat((incrementUnit < 0.1 ? 0.1 : (incrementUnit > 1 ? 1 : incrementUnit)).toFixed(1));
